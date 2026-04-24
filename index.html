@@ -180,13 +180,6 @@
         }
         .modal-close:hover { transform: scale(1.1); }
 
-        /* Helper Renk Sınıfları */
-        .c0 { background-color: var(--c0); } .c1 { background-color: var(--c1); }
-        .c2 { background-color: var(--c2); } .c3 { background-color: var(--c3); }
-        .c4 { background-color: var(--c4); } .c5 { background-color: var(--c5); }
-        .c6 { background-color: var(--c6); } .c7 { background-color: var(--c7); }
-        .c8 { background-color: var(--c8); } .c9 { background-color: var(--c9); }
-
         @media (max-width: 900px) {
             .social-sidebar { position: relative; top: 0; left: 0; flex-direction: row; justify-content: center; margin-bottom: 20px;}
         }
@@ -303,7 +296,7 @@
 
     <script>
         const totalQuestions = 5;
-        const timeLimit = 15; // Saniye cinsinden süre
+        const timeLimit = 30; // Süre 30 saniyeye çıkarıldı
 
         let currentQuestion = 1;
         let score = 0;
@@ -311,7 +304,7 @@
         
         let timerInterval;
         let timeLeft = timeLimit;
-        let totalReactionTime = 0; // Doğru/Yanlış fark etmeksizin harcanan toplam süre
+        let totalReactionTime = 0;
 
         // UI Elemanları
         const sIntro = document.getElementById('screen-intro');
@@ -387,7 +380,7 @@
         }
 
         function handleTimeOut() {
-            totalReactionTime += timeLimit; // Süre dolduğunda max süreyi ekle
+            totalReactionTime += timeLimit;
             guessInput.disabled = true;
             btnCheck.style.display = "none";
             
@@ -437,8 +430,8 @@
                 return;
             }
 
-            clearInterval(timerInterval); // Tahmin yapıldığında süreyi durdur
-            totalReactionTime += (timeLimit - Math.max(timeLeft, 0)); // Harcanan süreyi ekle
+            clearInterval(timerInterval); 
+            totalReactionTime += (timeLimit - Math.max(timeLeft, 0)); 
             
             guessInput.disabled = true;
             btnCheck.style.display = "none";
@@ -478,12 +471,11 @@
             switchScreen(sGame, sResult);
             document.getElementById('final-score').innerText = `${score}/5`;
             
-            // Ortalama süre hesabı
             const avgTime = (totalReactionTime / totalQuestions).toFixed(1);
             document.getElementById('time-stats').innerHTML = `Ortalama Yanıt Hızı: <span>${avgTime}s</span>`;
             
             const commentBox = document.getElementById('score-comment');
-            if (score === 5 && avgTime < 5) {
+            if (score === 5 && avgTime < 10) {
                 commentBox.innerText = "Kusursuz ve Şimşek Gibi! Hacettepe arşivleri seninle güvende.";
                 commentBox.style.color = "var(--success)";
             } else if (score === 5) {
