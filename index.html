@@ -18,17 +18,17 @@
             --success: #10b981;
             --danger: #ef4444;
             
-            /* TS Yönergesi Dosya Renkleri */
+            /* GÜNCELLENMİŞ TS Yönergesi Dosya Renkleri */
             --c0: #ef4444; /* Kırmızı */
             --c1: #94a3b8; /* Gri */
             --c2: #3b82f6; /* Mavi */
             --c3: #f97316; /* Turuncu */
             --c4: #a855f7; /* Mor */
-            --c5: #22c55e; /* Yeşil */
+            --c5: #18181b; /* Siyah (Karanlık temada okunabilmesi için çok koyu füme) */
             --c6: #eab308; /* Sarı */
             --c7: #8b4513; /* Kahverengi */
-            --c8: #0ea5e9; /* Açık Mavi */
-            --c9: #ec4899; /* Pembe */
+            --c8: #ec4899; /* Pembe */
+            --c9: #22c55e; /* Yeşil */
         }
 
         * { box-sizing: border-box; }
@@ -39,11 +39,12 @@
             color: var(--text-main); 
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; overflow-x: hidden;
+            padding: 20px 0;
         }
 
         .container {
             background: var(--card-bg); border: 1px solid var(--glass-border);
-            width: 100%; max-width: 600px; border-radius: 20px; padding: 40px;
+            width: 100%; max-width: 650px; border-radius: 20px; padding: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); backdrop-filter: blur(20px);
             position: relative; overflow: hidden;
         }
@@ -65,7 +66,7 @@
             display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3);
             padding: 10px 15px; border-radius: 12px; border: 1px solid var(--glass-border);
         }
-        .color-blob { width: 30px; height: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+        .color-blob { width: 30px; height: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);}
         .color-number { font-size: 20px; font-weight: 900; font-family: monospace;}
         .color-name { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;}
 
@@ -81,12 +82,12 @@
         }
         
         .band-container { display: flex; flex-direction: column; height: 100%; padding-left: 20px;}
-        .band-top { width: 60px; height: 40px; margin-top: 20px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
-        .band-mid { width: 30px; height: 120px; margin-top: 10px; margin-left: 15px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
+        .band-top { width: 60px; height: 40px; margin-top: 20px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.15);}
+        .band-mid { width: 30px; height: 120px; margin-top: 10px; margin-left: 15px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.15);}
         .band-bottom-group { display: flex; gap: 5px; margin-top: auto; margin-bottom: 20px;}
-        .band-bot { width: 30px; height: 40px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
+        .band-bot { width: 30px; height: 40px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.15);}
 
-        /* YENİ GİRDİ ALANI (00 Sabit) */
+        /* GİRDİ ALANI (00 Sabit) */
         .input-area { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center;}
         
         .input-wrapper {
@@ -168,17 +169,42 @@
             <h1>Smart Archive 5S Navigator</h1>
             <p>Hastane arşivlerinde dosyaların kaybolmasını önlemek için <strong>Terminal Digit Filing (Son Rakamlara Göre Dosyalama)</strong> sistemi kullanılır. Son iki hane (00) renklendirilmez, ilk 5 hane uluslararası renk kodlarıyla işaretlenir.</p>
             
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 30px; margin-bottom: 30px; background: rgba(0,0,0,0.3); padding: 25px 20px; border-radius: 15px; border: 1px solid var(--glass-border); width: 100%;">
+                
+                <div class="file-wrapper" style="width: 120px; height: 160px; margin-bottom: 0; box-shadow: none;">
+                    <div class="file-tab" style="height: 50px; right: -10px; width: 10px; top: 15px;"></div>
+                    <div class="band-container" style="padding-left: 10px;">
+                        <div class="band-top c2" style="width: 35px; height: 20px; margin-top: 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:bold; text-shadow: 1px 1px 2px black;">2</div>
+                        <div class="band-mid c3" style="width: 15px; height: 60px; margin-top: 5px; margin-left: 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:bold; text-shadow: 1px 1px 2px black;">3</div>
+                        <div class="band-bottom-group" style="gap: 3px; margin-bottom: 10px;">
+                            <div class="band-bot c2" style="width: 15px; height: 20px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:bold; text-shadow: 1px 1px 2px black;">2</div>
+                            <div class="band-bot c5" style="width: 15px; height: 20px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:bold; border-color: rgba(255,255,255,0.4);">5</div>
+                            <div class="band-bot c1" style="width: 15px; height: 20px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:bold; text-shadow: 1px 1px 2px black;">1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: left; font-size: 13px; color: var(--text-main); display: flex; flex-direction: column; gap: 10px;">
+                    <div style="font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Örnek: 2325100</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span class="c2" style="color:white; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-weight:bold; font-size:10px; border: 1px solid rgba(255,255,255,0.2);">2</span> <strong>Milyonlar</strong> (Üst Blok)</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span class="c3" style="color:white; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-weight:bold; font-size:10px; border: 1px solid rgba(255,255,255,0.2);">3</span> <strong>Yüz Binler</strong> (Orta Dikey)</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span class="c2" style="color:white; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-weight:bold; font-size:10px; border: 1px solid rgba(255,255,255,0.2);">2</span> <strong>On Binler</strong> (Alt Sol)</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span class="c5" style="color:white; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-weight:bold; font-size:10px; border: 1px solid rgba(255,255,255,0.4);">5</span> <strong>Binler</strong> (Alt Orta)</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span class="c1" style="color:white; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-weight:bold; font-size:10px; border: 1px solid rgba(255,255,255,0.2);">1</span> <strong>Yüzler</strong> (Alt Sağ)</div>
+                </div>
+            </div>
+
             <div class="color-grid">
                 <div class="color-card"><div class="color-blob c0"></div><div class="color-number">0</div><div class="color-name">Kırmızı</div></div>
                 <div class="color-card"><div class="color-blob c1"></div><div class="color-number">1</div><div class="color-name">Gri</div></div>
                 <div class="color-card"><div class="color-blob c2"></div><div class="color-number">2</div><div class="color-name">Mavi</div></div>
                 <div class="color-card"><div class="color-blob c3"></div><div class="color-number">3</div><div class="color-name">Turuncu</div></div>
                 <div class="color-card"><div class="color-blob c4"></div><div class="color-number">4</div><div class="color-name">Mor</div></div>
-                <div class="color-card"><div class="color-blob c5"></div><div class="color-number">5</div><div class="color-name">Yeşil</div></div>
+                <div class="color-card"><div class="color-blob c5"></div><div class="color-number">5</div><div class="color-name">Siyah</div></div>
                 <div class="color-card"><div class="color-blob c6"></div><div class="color-number">6</div><div class="color-name">Sarı</div></div>
-                <div class="color-card"><div class="color-blob c7"></div><div class="color-number">7</div><div class="color-name">Kahve</div></div>
-                <div class="color-card"><div class="color-blob c8"></div><div class="color-number">8</div><div class="color-name">Açık Mavi</div></div>
-                <div class="color-card"><div class="color-blob c9"></div><div class="color-number">9</div><div class="color-name">Pembe</div></div>
+                <div class="color-card"><div class="color-blob c7"></div><div class="color-number">7</div><div class="color-name">Kahverengi</div></div>
+                <div class="color-card"><div class="color-blob c8"></div><div class="color-number">8</div><div class="color-name">Pembe</div></div>
+                <div class="color-card"><div class="color-blob c9"></div><div class="color-number">9</div><div class="color-name">Yeşil</div></div>
             </div>
 
             <button class="btn" onclick="startGame()">Sistemi Anladım, Başla <i class="fa-solid fa-arrow-right"></i></button>
@@ -230,16 +256,16 @@
                 <button class="modal-close" onclick="toggleModal()"><i class="fa-solid fa-xmark"></i></button>
                 <h3 style="margin-top: 0; margin-bottom: 20px; text-align: center; color: white;">Renk Kodları Kılavuzu</h3>
                 <div class="color-grid" style="margin-bottom: 0;">
-                    <div class="color-card"><div class="color-blob c0"></div><div class="color-number">0</div></div>
-                    <div class="color-card"><div class="color-blob c1"></div><div class="color-number">1</div></div>
-                    <div class="color-card"><div class="color-blob c2"></div><div class="color-number">2</div></div>
-                    <div class="color-card"><div class="color-blob c3"></div><div class="color-number">3</div></div>
-                    <div class="color-card"><div class="color-blob c4"></div><div class="color-number">4</div></div>
-                    <div class="color-card"><div class="color-blob c5"></div><div class="color-number">5</div></div>
-                    <div class="color-card"><div class="color-blob c6"></div><div class="color-number">6</div></div>
-                    <div class="color-card"><div class="color-blob c7"></div><div class="color-number">7</div></div>
-                    <div class="color-card"><div class="color-blob c8"></div><div class="color-number">8</div></div>
-                    <div class="color-card"><div class="color-blob c9"></div><div class="color-number">9</div></div>
+                    <div class="color-card"><div class="color-blob c0"></div><div class="color-number">0</div><div class="color-name" style="font-size: 11px;">Kırmızı</div></div>
+                    <div class="color-card"><div class="color-blob c1"></div><div class="color-number">1</div><div class="color-name" style="font-size: 11px;">Gri</div></div>
+                    <div class="color-card"><div class="color-blob c2"></div><div class="color-number">2</div><div class="color-name" style="font-size: 11px;">Mavi</div></div>
+                    <div class="color-card"><div class="color-blob c3"></div><div class="color-number">3</div><div class="color-name" style="font-size: 11px;">Turuncu</div></div>
+                    <div class="color-card"><div class="color-blob c4"></div><div class="color-number">4</div><div class="color-name" style="font-size: 11px;">Mor</div></div>
+                    <div class="color-card"><div class="color-blob c5"></div><div class="color-number">5</div><div class="color-name" style="font-size: 11px;">Siyah</div></div>
+                    <div class="color-card"><div class="color-blob c6"></div><div class="color-number">6</div><div class="color-name" style="font-size: 11px;">Sarı</div></div>
+                    <div class="color-card"><div class="color-blob c7"></div><div class="color-number">7</div><div class="color-name" style="font-size: 11px;">Kahve</div></div>
+                    <div class="color-card"><div class="color-blob c8"></div><div class="color-number">8</div><div class="color-name" style="font-size: 11px;">Pembe</div></div>
+                    <div class="color-card"><div class="color-blob c9"></div><div class="color-number">9</div><div class="color-name" style="font-size: 11px;">Yeşil</div></div>
                 </div>
             </div>
         </div>
