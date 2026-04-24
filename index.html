@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Archive | 5S Color Coding Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --bg-dark: #0f172a; 
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --success: #10b981;
+            --danger: #ef4444;
+            
+            /* TS Yönergesi Dosya Renkleri */
+            --c0: #ef4444; /* Kırmızı */
+            --c1: #94a3b8; /* Gri */
+            --c2: #3b82f6; /* Mavi */
+            --c3: #f97316; /* Turuncu */
+            --c4: #a855f7; /* Mor */
+            --c5: #22c55e; /* Yeşil */
+            --c6: #eab308; /* Sarı */
+            --c7: #8b4513; /* Kahverengi */
+            --c8: #0ea5e9; /* Açık Mavi */
+            --c9: #ec4899; /* Pembe */
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-main); 
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        .container {
+            background: var(--card-bg); border: 1px solid var(--glass-border);
+            width: 100%; max-width: 600px; border-radius: 20px; padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); backdrop-filter: blur(20px);
+            position: relative; overflow: hidden;
+        }
+
+        /* Ekran Geçişleri */
+        .screen { display: none; flex-direction: column; align-items: center; text-align: center; animation: fadeIn 0.4s ease forwards;}
+        .screen.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .header-icon { font-size: 48px; color: var(--primary); margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));}
+        h1 { margin: 0 0 10px 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+        p { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 30px; }
+
+        /* RENK PALETİ TABLOSU (Sayfa 1) */
+        .color-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; margin-bottom: 30px;
+        }
+        .color-card {
+            display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3);
+            padding: 10px 15px; border-radius: 12px; border: 1px solid var(--glass-border);
+        }
+        .color-blob { width: 30px; height: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+        .color-number { font-size: 20px; font-weight: 900; font-family: monospace;}
+        .color-name { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;}
+
+        /* DOSYA GÖRSELLEŞTİRİCİ (Sayfa 2) */
+        .file-wrapper {
+            background: #e2e8f0; width: 220px; height: 300px; border-radius: 4px 15px 4px 4px;
+            position: relative; box-shadow: inset -5px 0 15px rgba(0,0,0,0.1), 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 30px; display: flex; flex-direction: column;
+        }
+        .file-tab {
+            position: absolute; right: -15px; top: 20px; width: 15px; height: 100px;
+            background: #cbd5e1; border-radius: 0 8px 8px 0;
+        }
+        
+        /* Renk Şeritleri (Slayttaki Formata Uygun) */
+        .band-container { display: flex; flex-direction: column; height: 100%; padding-left: 20px;}
+        
+        /* Milyonlar Hanesi */
+        .band-top { width: 60px; height: 40px; margin-top: 20px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
+        /* Yüz Binler Hanesi */
+        .band-mid { width: 30px; height: 120px; margin-top: 10px; margin-left: 15px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
+        /* On Bin, Bin, Yüzler Hanesi */
+        .band-bottom-group { display: flex; gap: 5px; margin-top: auto; margin-bottom: 20px;}
+        .band-bot { width: 30px; height: 40px; transition: background 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);}
+
+        /* GİRDİ ALANI */
+        .input-area { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center;}
+        .guess-input {
+            width: 200px; padding: 15px; font-size: 24px; font-weight: 900; text-align: center; letter-spacing: 5px;
+            background: rgba(0,0,0,0.4); border: 2px solid var(--glass-border); color: white;
+            border-radius: 12px; outline: none; transition: 0.3s; font-family: monospace;
+        }
+        .guess-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);}
+        
+        .progress-text { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;}
+        
+        .feedback { font-size: 16px; font-weight: 800; min-height: 24px; transition: 0.3s; }
+        .feedback.correct { color: var(--success); }
+        .feedback.wrong { color: var(--danger); }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            border: none; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 800;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5); }
+
+        /* SKOR EKRANI */
+        .score-circle {
+            width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--primary);
+            display: flex; justify-content: center; align-items: center; font-size: 48px; font-weight: 900;
+            margin-bottom: 20px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Helper Renk Sınıfları */
+        .c0 { background-color: var(--c0); } .c1 { background-color: var(--c1); }
+        .c2 { background-color: var(--c2); } .c3 { background-color: var(--c3); }
+        .c4 { background-color: var(--c4); } .c5 { background-color: var(--c5); }
+        .c6 { background-color: var(--c6); } .c7 { background-color: var(--c7); }
+        .c8 { background-color: var(--c8); } .c9 { background-color: var(--c9); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="screen-intro" class="screen active">
+            <i class="fa-solid fa-folder-open header-icon"></i>
+            <h1>Smart Archive 5S Navigator</h1>
+            <p>Hastane arşivlerinde dosyaların kaybolmasını önlemek için <strong>Son Rakamlara Göre Dosyalama (Terminal Digit Filing)</strong> sistemi kullanılır. Her rakamın uluslararası bir renk kodu vardır. Hafızanı test etmeye hazır mısın?</p>
+            
+            <div class="color-grid">
+                <div class="color-card"><div class="color-blob c0"></div><div class="color-number">0</div><div class="color-name">Kırmızı</div></div>
+                <div class="color-card"><div class="color-blob c1"></div><div class="color-number">1</div><div class="color-name">Gri</div></div>
+                <div class="color-card"><div class="color-blob c2"></div><div class="color-number">2</div><div class="color-name">Mavi</div></div>
+                <div class="color-card"><div class="color-blob c3"></div><div class="color-number">3</div><div class="color-name">Turuncu</div></div>
+                <div class="color-card"><div class="color-blob c4"></div><div class="color-number">4</div><div class="color-name">Mor</div></div>
+                <div class="color-card"><div class="color-blob c5"></div><div class="color-number">5</div><div class="color-name">Yeşil</div></div>
+                <div class="color-card"><div class="color-blob c6"></div><div class="color-number">6</div><div class="color-name">Sarı</div></div>
+                <div class="color-card"><div class="color-blob c7"></div><div class="color-number">7</div><div class="color-name">Kahve</div></div>
+                <div class="color-card"><div class="color-blob c8"></div><div class="color-number">8</div><div class="color-name">Açık Mavi</div></div>
+                <div class="color-card"><div class="color-blob c9"></div><div class="color-number">9</div><div class="color-name">Pembe</div></div>
+            </div>
+
+            <button class="btn" onclick="startGame()">Sistemi Anladım, Başla <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div class="progress-text" id="question-counter">Dosya 1 / 5</div>
+            <p style="margin-top: 5px; margin-bottom: 20px;">Renk kodlarını analiz ederek 5 haneli dosya numarasını girin.</p>
+            
+            <div class="file-wrapper">
+                <div class="file-tab"></div>
+                <div class="band-container">
+                    <div id="b-mil" class="band-top c0" title="Milyonlar"></div>
+                    <div id="b-yuzbin" class="band-mid c1" title="Yüz Binler"></div>
+                    <div class="band-bottom-group">
+                        <div id="b-onbin" class="band-bot c2" title="On Binler"></div>
+                        <div id="b-bin" class="band-bot c3" title="Binler"></div>
+                        <div id="b-yuz" class="band-bot c4" title="Yüzler"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="user-guess" class="guess-input" maxlength="5" autocomplete="off" placeholder="_____">
+                <div id="feedback-msg" class="feedback"></div>
+                <button id="btn-check" class="btn" onclick="checkGuess()">Tahmin Et <i class="fa-solid fa-check"></i></button>
+                <button id="btn-next" class="btn" onclick="prepareNextQuestion()" style="display: none; background: var(--success);">Sıradaki Dosya <i class="fa-solid fa-forward"></i></button>
+            </div>
+        </div>
+
+        <div id="screen-result" class="screen">
+            <i class="fa-solid fa-medal header-icon" style="color: #fbbf24; filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.5));"></i>
+            <h1>Simülasyon Tamamlandı</h1>
+            <p>Arşiv 5S ve görsel yönetim becerileriniz test edildi. İşte doğruluk oranınız:</p>
+            
+            <div class="score-circle" id="final-score">5/5</div>
+            <p id="score-comment" style="font-weight: 700; color: white;"></p>
+
+            <button class="btn" onclick="resetGame()"><i class="fa-solid fa-rotate-right"></i> Yeniden Dene</button>
+        </div>
+
+    </div>
+
+    <script>
+        const totalQuestions = 5;
+        let currentQuestion = 1;
+        let score = 0;
+        let targetNumber = "";
+
+        // UI Elemanları
+        const sIntro = document.getElementById('screen-intro');
+        const sGame = document.getElementById('screen-game');
+        const sResult = document.getElementById('screen-result');
+        const qCounter = document.getElementById('question-counter');
+        const guessInput = document.getElementById('user-guess');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const btnCheck = document.getElementById('btn-check');
+        const btnNext = document.getElementById('btn-next');
+
+        // Dosya Bantları
+        const bMil = document.getElementById('b-mil');
+        const bYuzbin = document.getElementById('b-yuzbin');
+        const bOnbin = document.getElementById('b-onbin');
+        const bBin = document.getElementById('b-bin');
+        const bYuz = document.getElementById('b-yuz');
+
+        // Yalnızca rakam girilmesini sağla
+        guessInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // Enter'a basınca tahmin et
+        guessInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && btnCheck.style.display !== 'none') {
+                checkGuess();
+            } else if (e.key === 'Enter' && btnNext.style.display !== 'none') {
+                prepareNextQuestion();
+            }
+        });
+
+        function switchScreen(hideScreen, showScreen) {
+            hideScreen.classList.remove('active');
+            showScreen.classList.add('active');
+        }
+
+        function startGame() {
+            score = 0;
+            currentQuestion = 1;
+            switchScreen(sIntro, sGame);
+            generateQuestion();
+        }
+
+        function generateQuestion() {
+            // Rastgele 5 haneli sayı üret
+            targetNumber = "";
+            for(let i=0; i<5; i++) {
+                targetNumber += Math.floor(Math.random() * 10).toString();
+            }
+
+            // Dosya renklerini güncelle
+            updateFileColors(targetNumber);
+
+            // Arayüzü hazırla
+            qCounter.innerText = `Dosya ${currentQuestion} / ${totalQuestions}`;
+            guessInput.value = "";
+            guessInput.disabled = false;
+            guessInput.focus();
+            feedbackMsg.innerText = "";
+            feedbackMsg.className = "feedback";
+            btnCheck.style.display = "flex";
+            btnNext.style.display = "none";
+        }
+
+        function updateFileColors(numStr) {
+            // Tüm cX classlarını temizle
+            [bMil, bYuzbin, bOnbin, bBin, bYuz].forEach(band => {
+                band.className = band.className.replace(/\bc\d\b/g, '');
+            });
+
+            // Yeni renkleri ekle
+            bMil.classList.add(`c${numStr[0]}`);
+            bYuzbin.classList.add(`c${numStr[1]}`);
+            bOnbin.classList.add(`c${numStr[2]}`);
+            bBin.classList.add(`c${numStr[3]}`);
+            bYuz.classList.add(`c${numStr[4]}`);
+        }
+
+        function checkGuess() {
+            const userVal = guessInput.value;
+            if(userVal.length !== 5) {
+                feedbackMsg.innerText = "Lütfen 5 haneyi de doldurun!";
+                feedbackMsg.className = "feedback wrong";
+                return;
+            }
+
+            guessInput.disabled = true;
+            btnCheck.style.display = "none";
+
+            if (userVal === targetNumber) {
+                score++;
+                feedbackMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Kusursuz Tespit!';
+                feedbackMsg.className = "feedback correct";
+            } else {
+                feedbackMsg.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Hatalı! Doğru numara: <strong>${targetNumber}</strong>`;
+                feedbackMsg.className = "feedback wrong";
+            }
+
+            if (currentQuestion < totalQuestions) {
+                btnNext.style.display = "flex";
+                btnNext.innerHTML = 'Sıradaki Dosya <i class="fa-solid fa-forward"></i>';
+            } else {
+                btnNext.style.display = "flex";
+                btnNext.innerHTML = 'Sonuçları Gör <i class="fa-solid fa-flag-checkered"></i>';
+            }
+        }
+
+        function prepareNextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                generateQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            switchScreen(sGame, sResult);
+            document.getElementById('final-score').innerText = `${score}/5`;
+            
+            const commentBox = document.getElementById('score-comment');
+            if (score === 5) {
+                commentBox.innerText = "Mükemmel! Hacettepe arşivleri emin ellerde.";
+                commentBox.style.color = "var(--success)";
+            } else if (score >= 3) {
+                commentBox.innerText = "İyi iş çıkardın, ancak hatalı dosyalar kaybolabilir!";
+                commentBox.style.color = "var(--primary)";
+            } else {
+                commentBox.innerText = "Renk kodlarına biraz daha çalışmalısın.";
+                commentBox.style.color = "var(--danger)";
+            }
+        }
+
+        function resetGame() {
+            switchScreen(sResult, sIntro);
+        }
+    </script>
+</body>
+</html>
